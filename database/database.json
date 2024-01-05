@@ -1,0 +1,47 @@
+ [
+
+    {
+      "id": 1,
+      "title": "Klender Regency",
+      "price": 5000,
+      "rating": 4.2,
+      "spots": 20,
+      "free": 10,
+      "coordinate": {
+        "latitude": -6.216173308867497,
+        "longitude": 106.89793354741761
+      },
+      "distance" : 2.5,
+      "description": ""
+    },
+    {
+      "id": 2,
+      "title": "Mall@Basura",
+      "price": 6000,
+      "rating": 3.8,
+      "spots": 25,
+      "free": 20,
+      "coordinate": {
+        "latitude": -6.223472667684617,  
+        "longitude": 106.87827093811552 
+      },
+      "distance" : 3.5,
+      "description": "Description about this parking lot\r\n  \r\n  Open year 2018\r\n  Secure with CTV"
+    },
+    {
+      "id": "3",
+      "title": "Cipinang Indah Mall",
+      "price": 4000,
+      "rating": 4.9,
+      "spots": 50,
+      "free": 25,
+      "coordinate": {
+        "latitude": -6.236547556723315, 
+        "longitude": 106.8941150290207
+      },
+      "distance" : 1,
+      "description": "Description about this parking lot\r\n  \r\n  Open year 2018\r\n  Secure with CTV"
+    }
+    
+
+]
