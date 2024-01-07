@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, Alert, Dimensions, TouchableOpacity, FlatList, TouchableWithoutFeedback, Linking, TextInput, ActivityIndicator, ScrollView } from 'react-native';
 import { db } from '../database/firebase-config';
-import { query, onValue, ref, update, set } from 'firebase/database';
+import { query, onValue, ref, update, set, remove } from 'firebase/database';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth'
 import MapView from 'react-native-maps';
 // import Dropdown from 'react-native-modal-dropdown';
@@ -40,7 +40,8 @@ export default class Map extends React.Component {
     free : 0,
     latitude : 0.0,
     longtitude: 0.0,
-    description : ""
+    description : "",
+    updateParking : null
   }
 
   UNSAFE_componentWillMount() {
@@ -163,11 +164,33 @@ export default class Map extends React.Component {
         spots : 0,
         free : 0,
         latitude : 0.0,
-        longitude : 0.0,
+        longtitude : 0.0,
         description : ""
       });
 
       Alert.alert("Data telah ditambah!");
+    })
+  }
+
+  delData(param){
+    remove(ref(db, 'parkingSpots/' + param));
+  }
+
+  updateData(param){
+    update(ref(db, 'parkingSpots/' + param.id), {
+      title: this.state.title ? this.state.title : param.title,
+      price: this.state.price ? parseInt(this.state.price) : parseInt(param.price),
+      rating: this.state.rating ? parseFloat(this.state.rating) : parseFloat(param.rating),
+      free: this.state.free ? parseInt(this.state.free) : parseInt(param.free),
+    })
+    .then(() => {
+      this.setState({
+        title : "",
+        price : 0,
+        rating : 0.0,
+        free : 0
+      });
+      Alert.alert("Data diubah!");
     })
   }
 
@@ -315,10 +338,10 @@ export default class Map extends React.Component {
   renderParking(item){
     const { hours } = this.state;
       return(
-        <TouchableWithoutFeedback key={`parking-${item.id}`} onPress={() => this.setState({ active: item.id, activeModal: item })} >
+        <TouchableWithoutFeedback key={`parking-${item?.id}`} onPress={() => this.setState({ active: item?.id, activeModal: item })} >
           <View style={[styles.parking, styles.shadow]}>
             <View style={styles.hours}>
-              <Text style={styles.hoursTitle}>{item.title} {item.free}/{item.spots}</Text>
+              <Text style={styles.hoursTitle}>{item?.title} {item?.free}/{item?.spots}</Text>
               {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {this.renderHours()}
                 <Text style={{ color: theme.COLORS.gray }}>hrs</Text>
@@ -328,11 +351,11 @@ export default class Map extends React.Component {
               <View style={styles.parkingInfo}>
                 <View style={styles.parkingIcon}>
                   <Ionicons name='ios-pricetag' size={theme.SIZES.icon} color={theme.COLORS.gray}/>
-                  <Text>IDR {item.price}</Text>
+                  <Text>IDR {item?.price}</Text>
                 </View>
                 <View style={styles.parkingIcon}>
                   <Ionicons name='ios-star' size={theme.SIZES.icon} color={theme.COLORS.gray}/>
-                  <Text>{item.rating}</Text>
+                  <Text>{item?.rating}</Text>
                 </View>
               </View>
               <TouchableOpacity  onPress={() => this.setState({ activeModal: item })}>
@@ -345,7 +368,7 @@ export default class Map extends React.Component {
                     <Text style={styles.buyTotalPrice}></Text>
                   </View>
                   <Text style={{ color: theme.COLORS.white }}>
-                    {item.price}x{hours[item.id]} hrs
+                    {item?.price}x{hours[item?.id]} hrs
                   </Text>
                 </View>
                 <View style={styles.buyButton}>
@@ -361,10 +384,10 @@ export default class Map extends React.Component {
   renderParkingManager(item){
     const { hours } = this.state;
       return(
-        <TouchableWithoutFeedback key={`parking-${item.id}`} onPress={() => this.setState({ active: item.id, activeModal: item })} >
+        <TouchableWithoutFeedback key={`parking-${item?.id}`} onPress={() => this.setState({ active: item?.id, activeModal: item })} >
           <View style={[styles.parking, styles.shadow]}>
             <View style={styles.hours}>
-              <Text style={styles.hoursTitle}>{item.title} {item.free}/{item.spots}</Text>
+              <Text style={styles.hoursTitle}>{item?.title} {item?.free}/{item?.spots}</Text>
               
               
             </View>
@@ -372,18 +395,22 @@ export default class Map extends React.Component {
               <View style={styles.parkingInfo}>
                 <View style={styles.parkingIcon}>
                   <Ionicons name='ios-pricetag' size={theme.SIZES.icon} color={theme.COLORS.gray}/>
-                  <Text>IDR {item.price}</Text>
+                  <Text>IDR {item?.price}</Text>
                 </View>
                 <View style={styles.parkingIcon}>
                   <Ionicons name='ios-star' size={theme.SIZES.icon} color={theme.COLORS.gray}/>
-                  <Text>{item.rating}</Text>
+                  <Text>{item?.rating}</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={() => this.setState({ activeModal: item })}>
+              <TouchableOpacity onPress={() => {
+                if (!this.state.loginfo){
+                this.setState({ loginModal: "login" });
+              } else {this.setState({updateParking : item })}
+              }}>
                 <Ionicons name='create-outline' size={25} color={theme.COLORS.green}/>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => this.setState({ activeModal: item })}>
+              <TouchableOpacity onPress={() => this.delData(item?.id)}>
                 <Ionicons name='trash-outline' size={25} color={theme.COLORS.red}/>
               </TouchableOpacity>
             </View>
@@ -404,7 +431,7 @@ export default class Map extends React.Component {
           style={styles.parkings}
           data={this.state.dataparking}
           extraData={this.state}
-          keyExtractor={(item, index) => `${item.id}`}
+          keyExtractor={(item, index) => `${item?.id}`}
           renderItem={({ item }) => this.renderParking(item)}
         />
       )
@@ -449,7 +476,7 @@ export default class Map extends React.Component {
           style={styles.parkings}
           data={this.state.dataparking}
           extraData={this.state}
-          keyExtractor={(item, index) => `${item.id}`}
+          keyExtractor={(item, index) => `${item?.id}`}
           renderItem={({ item }) => this.renderParkingManager(item) }
         />
   
@@ -573,6 +600,76 @@ export default class Map extends React.Component {
     );
   }
 
+  renderUpdate() {
+
+    const {updateParking} = this.state;
+    
+    if (!updateParking) return null;
+
+    return (
+      <Modal
+        isVisible
+        useNativeDriver
+        onBackButtonPress={() => {this.setState({updateParking : null})}}
+        onBackdropPress={() => {this.setState({updateParking : null})}}
+        onSwipeComplete={() => {this.setState({updateParking : null})}}
+        style={styles.modalContainer}
+       > 
+
+      <View style={styles.addUpdate}>
+
+      <Text style={{ color: theme.COLORS.gray, fontSize: theme.SIZES.font * 1.1, marginBottom: 10 }}>
+        Silakan ubah data
+      </Text>
+
+        <TextInput
+          style={styles.inputStyle}
+          placeholder={updateParking.title}
+          value={this.state.title}
+          onChangeText={(val) => this.updateInputVal(val, 'title')}
+          maxLength={32}
+        />  
+
+         <TextInput
+          style={styles.inputStyle}
+          placeholder="Harga Baru"
+          value={this.state.price}
+          onChangeText={(val) => this.updateInputVal(val, 'price')}
+          inputMode='numeric'
+        />   
+
+         <TextInput
+          style={styles.inputStyle}
+          placeholder="Rating Baru"
+          value={this.state.rating}
+          onChangeText={(val) => this.updateInputVal(val, 'rating')}
+          inputMode='numeric'
+        />   
+
+        <TextInput
+          style={styles.inputStyle}
+          placeholder="Free"
+          value={this.state.free}
+          onChangeText={(val) => this.updateInputVal(val, 'free')}
+          inputMode='numeric'
+        />   
+
+        <TouchableOpacity
+          color="#3740FE"
+          style={styles.payBtn}
+          onPress={() => this.updateData(updateParking)}
+        >
+        <Text style={styles.loginText}>
+          Ubah
+        </Text>
+        <Ionicons name='create-outline' size={theme.SIZES.icon * 2.1} color={theme.COLORS.white} />
+        </TouchableOpacity>                     
+
+        </View>
+      </Modal>
+    );
+  }
+
   render(){
     return (
       <View style={styles.container}>
@@ -607,6 +704,7 @@ export default class Map extends React.Component {
         {this.renderLogin()}
         {this.renderManager()}
         {this.renderAdd()}
+        {this.renderUpdate()}
       </View>
     );
   }
@@ -842,6 +940,16 @@ const styles = StyleSheet.create({
   addParking : {
     flexDirection: 'column',
     height: height * 0.80,
+    padding: theme.SIZES.base * 2,
+    // width : width,
+    backgroundColor: theme.COLORS.white,
+    borderTopLeftRadius: theme.SIZES.base,
+    borderTopRightRadius: theme.SIZES.base,
+  },
+
+  addUpdate : {
+    flexDirection: 'column',
+    height: height * 0.50,
     padding: theme.SIZES.base * 2,
     // width : width,
     backgroundColor: theme.COLORS.white,

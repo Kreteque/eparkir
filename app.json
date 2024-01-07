@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.aldiryaldi.snacke365d4678b8d4ec9acc4c95455e80309"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c384dbcc-8377-4635-ab71-26c7cb4b4d1d"
+      }
     }
   }
 }
