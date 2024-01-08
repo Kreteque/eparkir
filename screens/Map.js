@@ -3,17 +3,17 @@ import { StyleSheet, Text, View, Alert, Dimensions, TouchableOpacity, FlatList, 
 import { db } from '../database/firebase-config';
 import { query, onValue, ref, update, set, remove } from 'firebase/database';
 import {getAuth, signInWithEmailAndPassword} from 'firebase/auth'
+import { Marker }  from 'react-native-maps';
 import MapView from 'react-native-maps';
 // import Dropdown from 'react-native-modal-dropdown';
-
+// var MapView = require('react-native-maps');
 import Modal from 'react-native-modal';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import * as theme from '../theme';
 
 
-const {Marker} = MapView;
-
+// const {Marker} = MapView;
 // var parkingsSpots = [];
 
 const {height , width} = Dimensions.get('screen');
@@ -684,16 +684,16 @@ export default class Map extends React.Component {
         >
           {this.state.dataparking.map(parking =>
             <Marker 
-              key={`marker-${parking.id}`}
+              key={`marker-${parking?.id}`}
               coordinate={parking.coordinate}>
-                <TouchableWithoutFeedback onPress={() => this.setState({ active: parking.id })} >
+                <TouchableWithoutFeedback onPress={() => this.setState({ active: parking?.id })} >
                   <View style={[
                     styles.marker,
                     styles.shadow,
-                    this.state.active === parking.id ? styles.active : null
+                    this.state.active === parking?.id ? styles.active : null
                   ]}>
                     <Text style={styles.markerPrice}>{parking.title}</Text>
-                    <Text style={styles.markerStatus}> ({parking.free}/{parking.spots})</Text>
+                    <Text style={styles.markerStatus}> ({parking?.free}/{parking?.spots})</Text>
                   </View>
                 </TouchableWithoutFeedback>
             </Marker>
@@ -705,6 +705,7 @@ export default class Map extends React.Component {
         {this.renderManager()}
         {this.renderAdd()}
         {this.renderUpdate()}
+       
       </View>
     );
   }

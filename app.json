@@ -25,7 +25,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.aldiryaldi.snacke365d4678b8d4ec9acc4c95455e80309"
+      
+      "package": "com.aldiryaldi.snacke365d4678b8d4ec9acc4c95455e80309",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCp-BUoX8B8699rkbnb2P2CK4gXSeesVcc"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
